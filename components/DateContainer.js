@@ -49,3 +49,15 @@ export default function DateContainer({ date }) {
     </>
   );
 }
+
+// Add this CSS to your global styles or as a styled component
+`
+@keyframes modalAppear {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-modal-appear {
+  animation: modalAppear 0.3s ease-out;
+}
+`
