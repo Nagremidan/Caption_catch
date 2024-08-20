@@ -35,7 +35,7 @@ export default function DateContainer({ date }) {
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-sm w-full mx-4 animate-modal-appear">
             <h3 className="text-2xl font-bold text-indigo-600 mb-4">🚚 Delivery Day Reminder</h3>
             <p className="text-gray-700 mb-6">
-              You've got this! Delivery list is ready. Remember, safety is our top priority. Drive carefully. Thanks!
+              {`You've got this! Delivery list is ready. Remember, safety is our top priority. Drive carefully. Thanks!`}
             </p>
             <button 
               onClick={() => setShowModal(false)}
@@ -49,7 +49,6 @@ export default function DateContainer({ date }) {
     </>
   );
 }
-
 // Add this CSS to your global styles or as a styled component
 `
 @keyframes modalAppear {
