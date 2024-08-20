@@ -8,7 +8,6 @@ import StatsCards from '@/components/StatsCards'
 import DateContainer from '@/components/DateContainer'
 import BusList from '@/components/BusList'
 import BoxCountBadges from '@/components/BoxCountBadges'
-import BusFilter from '@/components/BusFilter'
 
 export default function Dashboard() {
   const [driverData, setDriverData] = useState(null)
@@ -110,12 +109,26 @@ export default function Dashboard() {
         <DateContainer date={driverData?.date || 'N/A'} />
         <BoxCountBadges busData={filteredBusData} />
         
-        <BusFilter
-          selectedBus={selectedBus}
-          onBusChange={(value) => setSelectedBus(value)}
-          busOptions={busOptions}
-          error={busError}
-        />
+        <div className="flex justify-end mb-4">
+          <div className="flex items-center">
+            <label htmlFor="busFilter" className="text-sm text-black mr-2">
+              Filter:
+            </label>
+            <select
+              id="busFilter"
+              value={selectedBus}
+              onChange={(e) => setSelectedBus(e.target.value)}
+              className="text-sm text-black border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-2 py-1"
+            >
+              {busOptions.map((option) => (
+                <option key={option} value={option} className="py-1">
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+        {busError && <p className="mt-2 text-sm text-red-600">{busError}</p>}
 
         <BusList busData={filteredBusData} />
       </main>
