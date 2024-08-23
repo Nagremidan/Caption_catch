@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 
 const BusFilter = ({ selectedBus, onBusChange, busOptions, error }) => {
   return (
-    <div className="mb-4 flex justify-end">
-      <div className="w-full sm:w-64 p-3 bg-white rounded-lg shadow-md" style={{
+    <div className="mb-4">
+      <div className="w-full p-3 bg-white rounded-lg shadow-md" style={{
         backgroundImage: `
           linear-gradient(#e6e6e6 1px, transparent 1px),
           linear-gradient(90deg, #e6e6e6 1px, transparent 1px)
@@ -14,7 +14,7 @@ const BusFilter = ({ selectedBus, onBusChange, busOptions, error }) => {
         borderLeft: '2px solid #9999ff'
       }}>
         <div className="flex flex-col space-y-2">
-          <h3 className="text-sm font-bold text-blue-600" style={{ fontFamily: 'Georgia, serif' }}>Filter by Bus/Location</h3>
+          <h3 className="text-sm font-bold text-blue-700" style={{ fontFamily: 'Georgia, serif' }}>Filter by Bus/Location</h3>
           {error ? (
             <div className="bg-red-100 text-red-800 p-2 rounded-md flex items-start space-x-2 text-xs" style={{ fontFamily: 'Verdana, sans-serif' }}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
@@ -45,8 +45,7 @@ const BusFilter = ({ selectedBus, onBusChange, busOptions, error }) => {
   );
 };
 
-const NotebookBoxCountBadges = ({ busData }) => {
-  const [selectedBus, setSelectedBus] = useState('All');
+const NotebookBoxCountBadges = ({ busData, selectedBus, onBusChange }) => {
   const [deliveryStatus, setDeliveryStatus] = useState({});
 
   const groupedBusData = useMemo(() => {
@@ -76,10 +75,10 @@ const NotebookBoxCountBadges = ({ busData }) => {
 
   if (!busData || busData.length === 0) {
     return (
-      <div className="mb-6">
+      <div className="mb-6 bg-transparent">
         <BusFilter
           selectedBus={selectedBus}
-          onBusChange={setSelectedBus}
+          onBusChange={onBusChange}
           busOptions={['All']}
           error="No bus data available"
         />
@@ -90,20 +89,20 @@ const NotebookBoxCountBadges = ({ busData }) => {
           `,
           backgroundSize: '20px 20px',
           boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-          borderLeft: '2px solid #ff9999'
+          borderLeft: '2px solid #000000'
         }}>
-          <h3 className="text-2xl font-bold mb-4 text-blue-600" style={{ fontFamily: 'Georgia, serif' }}>Total Boxes</h3>
-          <p className="text-gray-600" style={{ fontFamily: 'Verdana, sans-serif' }}>No bus data available.</p>
+          <h3 className="text-2xl font-bold mb-4 text-black" style={{ fontFamily: 'Georgia, serif' }}>Total Boxes</h3>
+          <p className="text-black" style={{ fontFamily: 'Verdana, sans-serif' }}>No bus data available.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mb-6">
+    <div className="mb-6 bg-transparent pt-0 mt-0">
       <BusFilter
         selectedBus={selectedBus}
-        onBusChange={setSelectedBus}
+        onBusChange={onBusChange}
         busOptions={busOptions}
         error={null}
       />
@@ -111,19 +110,18 @@ const NotebookBoxCountBadges = ({ busData }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white rounded-lg shadow-md p-6"
+        className="bg-gray-100 rounded-xl shadow-2xl p-6 sm:p-8"
         style={{
           backgroundImage: `
-            linear-gradient(#e6e6e6 1px, transparent 1px),
-            linear-gradient(90deg, #e6e6e6 1px, transparent 1px)
+            linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)
           `,
           backgroundSize: '20px 20px',
           boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-          borderLeft: '2px solid #ff9999'
         }}
       >
-        <h3 className="text-2xl font-bold mb-4 text-blue-600" style={{ fontFamily: 'Georgia, serif' }}>Total Boxes</h3>
-        <div className="space-y-4">
+        <h3 className="text-2xl sm:text-3xl font-bold mb-6 text-black text-center tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>Total Boxes</h3>
+        <div className="space-y-6">
           {Object.entries(filteredBusData).map(([busKey, busInfo], index) => {
             const isDelivered = deliveryStatus[busKey] || false;
 
@@ -134,26 +132,43 @@ const NotebookBoxCountBadges = ({ busData }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: index * 0.1 }}
                 className={`p-4 rounded-lg transition-all duration-300 ${
-                  isDelivered ? 'bg-green-100' : 'bg-yellow-100'
-                }`}
-                style={{ fontFamily: 'Verdana, sans-serif' }}
+                  isDelivered ? 'bg-green-100' : 'bg-white'
+                } hover:shadow-lg`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold text-gray-800">{busKey}</span>
+                  <span className="text-lg font-semibold text-black" style={{ fontFamily: 'Verdana, sans-serif' }}>{busKey}</span>
                   <div className="flex items-center space-x-4">
-                    <button
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
                       onClick={() => handleDeliveryCheck(busKey)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-300 focus:outline-none ${
-                        isDelivered
-                          ? 'bg-green-500 text-white'
-                          : 'bg-gray-300 text-gray-600 hover:bg-gray-400'
+                      className={`focus:outline-none p-1 rounded-full ${
+                        isDelivered ? 'bg-green-500' : 'bg-gray-200'
                       }`}
                     >
-                      {isDelivered ? 'Delivered' : 'Mark Delivered'}
-                    </button>
-                    <span className="text-xl font-bold px-3 py-1 rounded-full bg-white text-gray-800 border border-gray-300">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="20" 
+                        height="20" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke={isDelivered ? "#ffffff" : "#4b5563"}
+                        strokeWidth="3" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="transition-all duration-300"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    </motion.button>
+                    <motion.span 
+                      layout
+                      className={`text-xl font-bold px-3 py-1 rounded-full ${
+                        isDelivered ? 'bg-green-500 text-white' : 'bg-yellow-300 text-black'
+                      }`}
+                    >
                       {busInfo.totalBoxes}
-                    </span>
+                    </motion.span>
                   </div>
                 </div>
               </motion.div>

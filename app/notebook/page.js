@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../lib/firebaseConfig'; // Make sure this path is correct
+import { db } from '../../lib/firebaseConfig';
 import Header from '@/components/Header';
 import NotebookBusDetails from '@/components/NotebookBusDetails';
 import NotebookBoxCountBadges from '@/components/NotebookBoxCountBadges';
@@ -13,6 +13,7 @@ const NotebookPage = () => {
   const [busData, setBusData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedBus, setSelectedBus] = useState('All');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,6 +51,10 @@ const NotebookPage = () => {
     fetchData();
   }, []);
 
+  const handleBusChange = (bus) => {
+    setSelectedBus(bus);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -79,8 +84,7 @@ const NotebookPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col mt-28">
-     
+    <div className="min-h-screen bg-white flex flex-col pt-16">
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg" style={{
           backgroundImage: `
@@ -94,11 +98,17 @@ const NotebookPage = () => {
           boxShadow: '0 0 20px rgba(0,0,0,0.1)',
           borderLeft: '2px solid #ff9999'
         }}>
-          <NotebookBoxCountBadges busData={busData} />
-          <NotebookBusDetails busData={busData} />
+          <NotebookBoxCountBadges 
+            busData={busData} 
+            selectedBus={selectedBus} 
+            onBusChange={handleBusChange} 
+          />
+          <NotebookBusDetails 
+            busData={busData} 
+            selectedBus={selectedBus} 
+          />
         </div>
       </main>
-     
       <Footer />
     </div>
   );

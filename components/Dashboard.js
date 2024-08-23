@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null)
   const [busError, setBusError] = useState(null)
   const [selectedBus, setSelectedBus] = useState('All')
+  const [totalBoxes, setTotalBoxes] = useState(0)
 
   const storeLivecbecargo = async (data) => {
     try {
@@ -76,7 +77,7 @@ export default function Dashboard() {
   }, [])
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">
+    return <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
     </div>
   }
@@ -84,7 +85,7 @@ export default function Dashboard() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="bg-black text-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <div className="bg-white text-gray-800 p-6 rounded-lg shadow-lg max-w-md w-full">
           <h2 className="text-2xl font-bold mb-4">Error</h2>
           <p>{error}</p>
         </div>
@@ -93,32 +94,31 @@ export default function Dashboard() {
   }
 
   const filteredBusData = selectedBus === 'All' ? busData : busData.filter(bus => bus.bus === selectedBus)
-  const totalArticles = filteredBusData.reduce((sum, bus) => sum + (parseInt(bus.boxCount) || 0), 0)
   const busOptions = ['All', ...new Set(busData.map(bus => bus.bus).filter(Boolean))]
 
   return (
-    <div className="min-h-screen bg-gray-100 mt-28">
-      <main className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-100">
+      <Header />
+      <main className="container mx-auto px-4 pt-20 pb-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Dashboard</h2>
         <StatsCards 
           totalArticles={driverData.total || 0}
           diesel={driverData?.diesel || 0}
           startTime={driverData?.vehicleStartTime || 'N/A'}
-          total={driverData?.total}
         />
         <DateContainer date={driverData?.date || 'N/A'} />
-        <BoxCountBadges busData={filteredBusData} />
+        <BoxCountBadges busData={filteredBusData} setTotalBoxes={setTotalBoxes} />
         
         <div className="flex justify-end mb-4">
           <div className="flex items-center">
-            <label htmlFor="busFilter" className="text-sm text-black mr-2">
+            <label htmlFor="busFilter" className="text-sm text-gray-700 mr-2">
               Filter:
             </label>
             <select
               id="busFilter"
               value={selectedBus}
               onChange={(e) => setSelectedBus(e.target.value)}
-              className="text-sm text-black border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-2 py-1"
+              className="text-sm text-gray-800 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 px-2 py-1"
             >
               {busOptions.map((option) => (
                 <option key={option} value={option} className="py-1">

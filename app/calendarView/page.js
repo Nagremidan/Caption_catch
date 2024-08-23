@@ -54,7 +54,7 @@ export default function CalendarViewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white mt-28">
+    <div className="min-h-screen bg-white pt-12">
       <CalendarView driverName={driverData?.driverName || 'Unknown Driver'} />
     </div>
   )

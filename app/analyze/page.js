@@ -6,7 +6,7 @@ import Analyze from '@/components/Analyze';
 
 const AnalyzePage = () => {
   return (
-    <div className="min-h-screen bg-gray-100 mt-28">
+    <div className="min-h-screen bg-gray-100 pt-16">
       
       <main className="container mx-auto px-4 py-8">
         <Analyze />
