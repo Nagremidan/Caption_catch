@@ -72,7 +72,7 @@ const DieselReport = ({ filteredData, totalDiesel }) => {
         <thead className="bg-gray-100">
           <tr>
             <th className="px-6 py-3 text-left text-lg font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-            <th className="px-6 py-3 text-right text-lg font-semibold text-gray-600 uppercase tracking-wider">Diesel Cost</th>
+            <th className="px-6 py-3 text-right text-lg font-semibold text-gray-600 uppercase tracking-wider">Cost</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">

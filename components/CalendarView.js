@@ -84,7 +84,7 @@ const CalendarView = ({ driverName }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-200 to-indigo-200 px-2 sm:px-4">
+    <div className="min-h-screen bg-gradient-to-r from-purple-200 to-indigo-200 px-2 sm:px-4 pt-12">
       <main className="container mx-auto py-4 sm:py-8">
         <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center text-purple-900">Calendar View (CBE Cargo)</h2>
         <div className="mx-auto bg-white p-2 sm:p-4 rounded-lg shadow-lg" style={{ maxWidth: '900px' }}>

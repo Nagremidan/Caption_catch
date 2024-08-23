@@ -11,7 +11,7 @@ const BusFilter = ({ selectedBus, onBusChange, busOptions, error }) => {
         `,
         backgroundSize: '20px 20px',
         boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-        borderLeft: '2px solid #9999ff'
+        borderLeft: '4px solid #000000'  // Changed to black and made thicker
       }}>
         <div className="flex flex-col space-y-2">
           <h3 className="text-sm font-bold text-blue-700" style={{ fontFamily: 'Georgia, serif' }}>Filter by Bus/Location</h3>
@@ -89,7 +89,7 @@ const NotebookBoxCountBadges = ({ busData, selectedBus, onBusChange }) => {
           `,
           backgroundSize: '20px 20px',
           boxShadow: '0 0 20px rgba(0,0,0,0.1)',
-          borderLeft: '2px solid #000000'
+          borderLeft: '4px solid #000000'  // Changed to black and made thicker
         }}>
           <h3 className="text-2xl font-bold mb-4 text-black" style={{ fontFamily: 'Georgia, serif' }}>Total Boxes</h3>
           <p className="text-black" style={{ fontFamily: 'Verdana, sans-serif' }}>No bus data available.</p>
@@ -118,6 +118,7 @@ const NotebookBoxCountBadges = ({ busData, selectedBus, onBusChange }) => {
           `,
           backgroundSize: '20px 20px',
           boxShadow: '0 0 20px rgba(0,0,0,0.1)',
+          borderLeft: '4px solid #000000'  // Added strong black left border
         }}
       >
         <h3 className="text-2xl sm:text-3xl font-bold mb-6 text-black text-center tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>Total Boxes</h3>
@@ -134,6 +135,10 @@ const NotebookBoxCountBadges = ({ busData, selectedBus, onBusChange }) => {
                 className={`p-4 rounded-lg transition-all duration-300 ${
                   isDelivered ? 'bg-green-100' : 'bg-white'
                 } hover:shadow-lg`}
+                style={{
+                  borderLeft: '4px solid #000000',  // Added strong black left border
+                  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'  // Added subtle shadow for better separation
+                }}
               >
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-semibold text-black" style={{ fontFamily: 'Verdana, sans-serif' }}>{busKey}</span>
@@ -166,6 +171,7 @@ const NotebookBoxCountBadges = ({ busData, selectedBus, onBusChange }) => {
                       className={`text-xl font-bold px-3 py-1 rounded-full ${
                         isDelivered ? 'bg-green-500 text-white' : 'bg-yellow-300 text-black'
                       }`}
+                      style={{ textShadow: '1px 1px 1px rgba(0, 0, 0, 0.1)' }}  // Added subtle text shadow for better readability
                     >
                       {busInfo.totalBoxes}
                     </motion.span>
