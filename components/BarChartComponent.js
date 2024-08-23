@@ -19,15 +19,18 @@ const BarChartComponent = ({ data, isMobile }) => {
   return (
     <div className="w-full">
       <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+        <BarChart 
+          data={data} 
+          margin={isMobile ? { top: 20, right: 0, left: 0, bottom: 60 } : { top: 20, right: 30, left: 20, bottom: 60 }}
+        >
           <XAxis 
             dataKey="date" 
-            tick={{ fill: '#4A5568', fontSize: isMobile ? 12 : 14 }} 
+            tick={{ fill: '#4A5568', fontSize: isMobile ? 10 : 14 }} 
             tickFormatter={formatXAxis}
             height={60}
             interval={isMobile ? 'preserveStartEnd' : 0}
-            angle={isMobile ? 0 : -45}
-            textAnchor={isMobile ? 'middle' : 'end'}
+            angle={isMobile ? -45 : -45}
+            textAnchor="end"
           />
           <YAxis tick={{ fill: '#4A5568', fontSize: 14 }} />
           <Tooltip 

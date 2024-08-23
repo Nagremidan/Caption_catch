@@ -109,7 +109,7 @@ const NotebookPage = () => {
           />
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 };
