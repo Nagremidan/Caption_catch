@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react';
 
 class ErrorBoundary extends React.Component {
@@ -28,6 +30,12 @@ class ErrorBoundary extends React.Component {
               <br />
               {this.state.errorInfo && this.state.errorInfo.componentStack}
             </details>
+            <button
+              onClick={() => this.setState({ hasError: false, error: null, errorInfo: null })}
+              className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              Try again
+            </button>
           </div>
         </div>
       );
