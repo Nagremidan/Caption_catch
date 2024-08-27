@@ -24,7 +24,7 @@ const BusReports = ({ allReports }) => {
     const formatRow = (items) => '| ' + items.map((item, i) => (item || '').toString().padEnd(widths[i])).join(' | ') + ' |';
     const separator = '+' + widths.map(w => '-'.repeat(w + 2)).join('+') + '+';
 
-    let table = '\n' + separator + '\n' + formatRow(headers) + '\n' + separator + '\n';
+    let table = separator + '\n' + formatRow(headers) + '\n' + separator + '\n';
     table += data.map(row => 
       formatRow([row.from, row.to, row.numberOfBoxes, `₹${row.pricePerBox?.toFixed(2) || '0.00'}`, `₹${row.totalAmount?.toFixed(2) || '0.00'}`])
     ).join('\n') + '\n' + separator + '\n';
@@ -36,11 +36,12 @@ const BusReports = ({ allReports }) => {
   return (
     <div className="mt-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl sm:text-2xl font-bold">Individual Bus Reports</h2>
+        <h2 className="text-xl font-bold">Individual Bus Reports</h2>
         <Button
           onClick={() => setIsVisible(!isVisible)}
           variant="outline"
-          className="flex items-center"
+          size="sm"
+          className="text-sm"
         >
           {isVisible ? (
             <>Hide Reports <ChevronUp className="ml-2 h-4 w-4" /></>
@@ -53,13 +54,13 @@ const BusReports = ({ allReports }) => {
       {isVisible && (
         <div className="space-y-4">
           {Object.entries(allReports).map(([busName, busReport]) => (
-            <Card key={busName} className="w-full">
-              <CardHeader className="p-3 sm:p-6">
-                <CardTitle className="text-lg sm:text-xl">{busName}</CardTitle>
+            <Card key={busName} className="w-full bg-white text-green-900 overflow-hidden">
+              <CardHeader className="p-2 ">
+                <CardTitle className="text-lg">$ {busName} Report</CardTitle>
               </CardHeader>
-              <CardContent className="p-3 sm:p-6">
+              <CardContent className="p-0">
                 <div className="overflow-x-auto">
-                  <pre className="whitespace-pre-wrap text-xs sm:text-sm">
+                  <pre className="whitespace-pre font-mono text-xs p-2" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
                     {formatAsciiTable(busReport.report, busReport.totalAmount)}
                   </pre>
                 </div>
