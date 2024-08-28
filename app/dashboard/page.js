@@ -3,7 +3,7 @@ import React from 'react'
 
 function page() {
   return (
-    <div>
+    <div className='pt-6'>
       <Dashboard/>
     </div>
   )

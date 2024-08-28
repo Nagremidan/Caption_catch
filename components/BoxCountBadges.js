@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from "framer-motion";
 import BusFilter from './BusFilter';
 
@@ -107,8 +107,11 @@ const BoxCountBadges = ({ busData, selectedBus, onBusChange }) => {
                   <motion.span 
                     layout
                     className={`text-xl font-bold px-3 py-1 rounded-full ${
-                      isDelivered ? 'bg-white text-green-500' : 'bg-yellow-300 text-gray-800'
+                      isDelivered ? 'bg-white text-green-500' : 'text-gray-800'
                     }`}
+                    style={{
+                      backgroundColor: isDelivered ? 'white' : '#D2B53B'
+                    }}
                   >
                     {busInfo.totalBoxes}
                   </motion.span>

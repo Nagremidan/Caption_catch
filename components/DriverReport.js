@@ -16,8 +16,8 @@ const DriverReport = ({ filteredData, selectedDriver, drivers, setSelectedDriver
   };
 
   return (
-    <div className="lg:w-1/2 bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-2xl font-semibold mb-6 text-gray-800">Captain-wise Report</h3>
+    <div className="lg:w-1/2 bg-gradient-to-br from-[#e6f3f7] to-white p-6 rounded-lg shadow-lg transition-all duration-300 hover:shadow-xl">
+      <h3 className="text-3xl font-bold mb-6 text-[#1286A8] text-center">Captain-wise Report</h3>
       <div className="flex flex-wrap justify-between items-center mb-6">
         <select
           value={selectedDriver}
@@ -25,31 +25,34 @@ const DriverReport = ({ filteredData, selectedDriver, drivers, setSelectedDriver
             setSelectedDriver(e.target.value);
             setCurrentPage(1);
           }}
-          className="p-3 border rounded-lg text-gray-700 bg-white mb-3 sm:mb-0 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="p-3 border rounded-lg text-gray-700 bg-white mb-3 sm:mb-0 text-lg focus:outline-none focus:ring-2 focus:ring-[#1286A8]"
         >
           {drivers.map(driver => (
             <option key={driver} value={driver}>{driver}</option>
           ))}
         </select>
         {selectedDriver !== 'All' && (
-          <div className="bg-indigo-100 text-indigo-800 px-5 py-3 rounded-lg shadow text-lg">
+          <div className="bg-[#e6f3f7] text-[#1286A8] px-5 py-3 rounded-lg shadow text-lg">
             <span className="font-semibold">{selectedDriver}</span>: {rowCount} {rowCount === 1 ? 'Day' : 'Days'}
           </div>
         )}
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full bg-white border border-gray-300 text-lg">
-          <thead className="bg-gray-100">
+      <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
+        <table className="w-full border-collapse">
+          <thead className="bg-[#1286A8] text-white">
             <tr>
-              <th className="px-6 py-3 border text-left text-gray-800">Date</th>
-              <th className="px-6 py-3 border text-left text-gray-800">Driver Name</th>
+              <th className="px-6 py-4 text-left text-lg font-semibold uppercase tracking-wider">Date</th>
+              <th className="px-6 py-4 text-left text-lg font-semibold uppercase tracking-wider">Driver Name</th>
             </tr>
           </thead>
-          <tbody>
-            {paginatedData.map(item => (
-              <tr key={item.id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 border text-gray-700">{item.date}</td>
-                <td className="px-6 py-4 border text-gray-700">{item.driverName}</td>
+          <tbody className="divide-y divide-gray-200">
+            {paginatedData.map((item, index) => (
+              <tr 
+                key={item.id}
+                className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} transition-colors duration-300 hover:bg-[#e6f3f7]`}
+              >
+                <td className="px-6 py-4 whitespace-nowrap text-md font-medium text-gray-900">{item.date}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-md text-gray-900">{item.driverName}</td>
               </tr>
             ))}
           </tbody>
@@ -60,7 +63,7 @@ const DriverReport = ({ filteredData, selectedDriver, drivers, setSelectedDriver
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border border-[#1286A8] rounded-md text-sm font-medium text-[#1286A8] bg-white hover:bg-[#e6f3f7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
           >
             Previous
           </button>
@@ -70,7 +73,7 @@ const DriverReport = ({ filteredData, selectedDriver, drivers, setSelectedDriver
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 border border-[#1286A8] rounded-md text-sm font-medium text-[#1286A8] bg-white hover:bg-[#e6f3f7] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-300"
           >
             Next
           </button>
