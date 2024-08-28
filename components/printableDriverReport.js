@@ -50,7 +50,12 @@ const PrintableDriverReport = () => {
     return grouped;
   };
 
-  const groupedBuses = groupBusesByName();
+  const sortedGroupedBuses = () => {
+    const grouped = groupBusesByName();
+    return Object.entries(grouped).sort((a, b) => a[1].length - b[1].length);
+  };
+
+  const groupedBuses = sortedGroupedBuses();
 
   if (loading) {
     return (
@@ -97,28 +102,30 @@ const PrintableDriverReport = () => {
         <section className="driver-sheets">
           <h2 className="section-title">Driver Sheets</h2>
           {driverData.length > 0 ? (
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Driver Name</th>
-                  <th>Diesel</th>
-                  <th>Total</th>
-                  <th>Vehicle Start Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {driverData.map((driver, index) => (
-                  <tr key={index}>
-                    <td>{driver.date}</td>
-                    <td>{driver.driverName}</td>
-                    <td>{driver.diesel}</td>
-                    <td>{driver.total}</td>
-                    <td>{driver.vehicleStartTime}</td>
+            <div className="table-responsive">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Driver Name</th>
+                    <th>Diesel</th>
+                    <th>Total</th>
+                    <th>Vehicle Start Time</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {driverData.map((driver, index) => (
+                    <tr key={index}>
+                      <td data-label="Date">{driver.date}</td>
+                      <td data-label="Driver Name">{driver.driverName}</td>
+                      <td data-label="Diesel">{driver.diesel}</td>
+                      <td data-label="Total">{driver.total}</td>
+                      <td data-label="Vehicle Start Time">{driver.vehicleStartTime}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           ) : (
             <p>No driver data available.</p>
           )}
@@ -126,36 +133,38 @@ const PrintableDriverReport = () => {
 
         <section className="bus-details">
           <h2 className="section-title">Bus Details</h2>
-          {Object.entries(groupedBuses).length > 0 ? (
-            Object.entries(groupedBuses).map(([busName, buses]) => (
+          {groupedBuses.length > 0 ? (
+            groupedBuses.map(([busName, buses]) => (
               <div key={busName} className="bus-group">
                 <h3 className="bus-title">{busName}</h3>
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>From</th>
-                      <th>From Mobile</th>
-                      <th>To</th>
-                      <th>To Mobile</th>
-                      <th>Boxes</th>
-                      <th>Payment Mode</th>
-                      <th>Amount</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {buses.map((bus, index) => (
-                      <tr key={index}>
-                        <td>{bus.from}</td>
-                        <td>{bus.fromMobile}</td>
-                        <td>{bus.to}</td>
-                        <td>{bus.toMobile}</td>
-                        <td>{bus.numberOfBoxes}</td>
-                        <td>{bus.paymentMode}</td>
-                        <td>{bus.amount}</td>
+                <div className="table-responsive">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>From</th>
+                        <th>From Mobile</th>
+                        <th>To</th>
+                        <th>To Mobile</th>
+                        <th>Boxes</th>
+                        <th>Payment Mode</th>
+                        <th>Amount</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {buses.map((bus, index) => (
+                        <tr key={index}>
+                          <td data-label="From">{bus.from}</td>
+                          <td data-label="From Mobile">{bus.fromMobile}</td>
+                          <td data-label="To">{bus.to}</td>
+                          <td data-label="To Mobile">{bus.toMobile}</td>
+                          <td data-label="Boxes">{bus.numberOfBoxes}</td>
+                          <td data-label="Payment Mode">{bus.paymentMode}</td>
+                          <td data-label="Amount">{bus.amount}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             ))
           ) : (
@@ -180,28 +189,31 @@ const PrintableDriverReport = () => {
         }
 
         .report-container {
-          max-width: 210mm;
+          max-width: 100%;
           margin: 0 auto;
-          padding: 20mm;
+          padding: 20px;
         }
 
         .print-content {
-          font-size: 10pt;
+          font-size: 14px;
         }
 
         .section-title {
-          font-size: 14pt;
+          font-size: 24px;
           font-weight: 600;
-          margin-bottom: 10px;
-          page-break-after: avoid;
+          margin-bottom: 20px;
         }
 
         .bus-title {
-          font-size: 12pt;
+          font-size: 20px;
           font-weight: 500;
-          margin-top: 20px;
-          margin-bottom: 5px;
-          page-break-after: avoid;
+          margin-top: 30px;
+          margin-bottom: 15px;
+        }
+
+        .table-responsive {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
         }
 
         .data-table {
@@ -213,7 +225,7 @@ const PrintableDriverReport = () => {
         .data-table th,
         .data-table td {
           border: 1px solid #ddd;
-          padding: 8px;
+          padding: 12px;
           text-align: left;
         }
 
@@ -278,9 +290,62 @@ const PrintableDriverReport = () => {
           100% { transform: rotate(360deg); }
         }
 
+        @media screen and (max-width: 768px) {
+          .report-container {
+            padding: 10px;
+          }
+
+          .section-title {
+            font-size: 20px;
+          }
+
+          .bus-title {
+            font-size: 18px;
+          }
+
+          .data-table {
+            border: 0;
+          }
+
+          .data-table thead {
+            display: none;
+          }
+
+          .data-table tr {
+            margin-bottom: 20px;
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+          }
+
+          .data-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+          }
+
+          .data-table td:last-child {
+            border-bottom: 0;
+          }
+
+          .data-table td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            text-transform: uppercase;
+            flex-basis: 50%;
+            text-align: left;
+          }
+        }
+
         @media print {
           body {
             background: white;
+            font-size: 10pt;
+            line-height: 1.3;
           }
 
           .report-container {
@@ -291,7 +356,7 @@ const PrintableDriverReport = () => {
           }
 
           .print-content {
-            padding: 10mm;
+            padding: 0;
           }
 
           .print-button,
@@ -299,8 +364,25 @@ const PrintableDriverReport = () => {
             display: none !important;
           }
 
+          .section-title {
+            font-size: 14pt;
+            margin: 10pt 0 5pt 0;
+          }
+
+          .bus-title {
+            font-size: 12pt;
+            margin: 5pt 0 2pt 0;
+          }
+
           .data-table {
             page-break-inside: auto;
+            margin-bottom: 5pt;
+          }
+
+          .data-table th,
+          .data-table td {
+            padding: 3pt;
+            font-size: 9pt;
           }
 
           .data-table tr {
@@ -318,50 +400,20 @@ const PrintableDriverReport = () => {
 
           .bus-group {
             page-break-inside: avoid;
+            margin-bottom: 5pt;
           }
 
-          /* Hide header and footer */
           header, footer {
             display: none !important;
           }
 
-          /* Adjust margins for different pages */
           @page {
             size: A4 portrait;
-            margin: 15mm 10mm;
+            margin: 10mm 5mm;
           }
 
-          @page :first {
-            margin-top: 10mm;
-          }
-
-          /* Add top margin to content on pages after the first */
-          .print-content {
-            position: relative;
-          }
-
-          .print-content::after {
-            content: '';
-            display: block;
-            height: 20mm;
-          }
-
-          .section-title {
-            margin-top: 15mm;
-          }
-
-          .section-title:first-child {
-            margin-top: 0;
-          }
-
-          /* Optimize page breaks */
           .driver-sheets,
           .bus-details {
-            page-break-before: auto;
-          }
-
-          .bus-group {
-            page-break-inside: avoid;
             page-break-before: auto;
           }
         }

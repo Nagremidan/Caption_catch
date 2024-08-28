@@ -1,10 +1,5 @@
-'use client'
-
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import React, { useState, useRef, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 const DataEntry = ({ 
   buses, 
@@ -18,6 +13,13 @@ const DataEntry = ({
 }) => {
   const [enteredAmount, setEnteredAmount] = useState('');
   const [isFormVisible, setIsFormVisible] = useState(true);
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (isFormVisible && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFormVisible]);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -27,64 +29,57 @@ const DataEntry = ({
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="p-4 flex flex-row items-center justify-between">
-        <CardTitle className="text-xl">Data Entry</CardTitle>
-        <Button
-          onClick={() => setIsFormVisible(!isFormVisible)}
-          variant="outline"
-          size="sm"
-          className="text-sm"
-        >
-          {isFormVisible ? 'Hide Form' : 'Show Form'}
-        </Button>
-      </CardHeader>
-      <CardContent className="p-4">
-        {isFormVisible && (
-          <>
-            {!isDataEntryComplete && (
-              <div className="mb-4">
-                <Select onValueChange={setSelectedBus} value={selectedBus}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a bus" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {buses.map((bus) => (
-                      <SelectItem key={bus.id} value={bus.name} disabled={disabledBuses.includes(bus.name)}>
-                        {bus.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            {error && <div className="text-red-500 mb-4 text-sm">{error}</div>}
-
-            <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono">
-              <p className="mb-3 text-sm break-words">$ {commandPrompt}</p>
-              <Input
-                type="number"
-                value={enteredAmount}
-                onChange={(e) => setEnteredAmount(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="mb-3 w-full bg-gray-800 text-green-400 border-green-400 text-base"
-                placeholder="Enter amount"
-              />
-              <Button 
-                onClick={() => {
-                  handleAmountSubmit(enteredAmount);
-                  setEnteredAmount('');
-                }}
-                className="w-full bg-green-600 hover:bg-green-700 text-white text-base"
-              >
-                Submit
-              </Button>
-            </div>
-          </>
+    <div className="w-full max-w-md mx-auto">
+      <div className="bg-gradient-to-b from-[#504b45] to-[#3c3b37] h-8 rounded-t-md flex items-center px-2">
+        <div className="flex space-x-1.5">
+          <button className="w-3 h-3 rounded-full bg-[#ee411a]"></button>
+          <button className="w-3 h-3 rounded-full bg-gradient-to-b from-[#7d7871] to-[#595953]"></button>
+          <button className="w-3 h-3 rounded-full bg-gradient-to-b from-[#7d7871] to-[#595953]"></button>
+        </div>
+        <p className="text-[#d5d0ce] ml-2 text-sm">gokotagiri@admin ~</p>
+      </div>
+      <div className="bg-[rgba(56,4,40,0.9)] text-white p-4 rounded-b-md font-mono text-sm">
+        <div className="flex items-center mb-2">
+          <span className="text-[#7eda28]">gokotagiri@admin</span>
+          <span className="text-[#4878c0]">~</span>
+          <span className="text-[#dddddd]">$</span>
+          <span className="ml-1">{commandPrompt}</span>
+        </div>
+        
+        {isFormVisible && !isDataEntryComplete && (
+          <Select onValueChange={setSelectedBus} value={selectedBus} className="mb-2">
+            <SelectTrigger className="w-full bg-transparent border-[#4878c0] text-white">
+              <SelectValue placeholder="Select a bus" />
+            </SelectTrigger>
+            <SelectContent>
+              {buses.map((bus) => (
+                <SelectItem key={bus.id} value={bus.name} disabled={disabledBuses.includes(bus.name)}>
+                  {bus.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
-      </CardContent>
-    </Card>
+        
+        {error && <div className="text-red-500 mb-2">{error}</div>}
+        
+        <div className="flex items-center">
+          <span className="text-[#7eda28]">gokotagiri@admin:</span>
+          <span className="text-[#4878c0]">~</span>
+          <span className="text-[#dddddd]">$</span>
+          <input
+            ref={inputRef}
+            type="text"
+            value={enteredAmount}
+            onChange={(e) => setEnteredAmount(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="ml-1 bg-transparent border-none outline-none text-white w-full"
+            placeholder="Enter amount"
+          />
+        </div>
+        <div className="h-4 w-2 bg-white ml-1 animate-pulse"></div>
+      </div>
+    </div>
   );
 };
 

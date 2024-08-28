@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState, useEffect } from 'react';
@@ -7,6 +6,7 @@ import { db } from '../lib/firebaseConfig';
 import DataEntry from '../components/DataEntry';
 import Summary from '../components/Summary';
 import BusReports from '../components/BusReports';
+import { Button } from '@/components/ui/button';
 
 const SalesReport = () => {
   const [buses, setBuses] = useState([]);
@@ -22,6 +22,7 @@ const SalesReport = () => {
   const [tmyHandling, setTmyHandling] = useState('');
   const [currentPrompt, setCurrentPrompt] = useState('bus');
   const [disabledBuses, setDisabledBuses] = useState([]);
+  const [showDataEntry, setShowDataEntry] = useState(true);
 
   useEffect(() => {
     const fetchBuses = async () => {
@@ -176,22 +177,34 @@ const SalesReport = () => {
     }
   };
 
+  const toggleDataEntry = () => {
+    setShowDataEntry(!showDataEntry);
+  };
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center text-primary mb-6">Sales Report</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white shadow-md rounded-lg p-4 sm:p-6">
-          <DataEntry
-            buses={buses}
-            selectedBus={selectedBus}
-            setSelectedBus={setSelectedBus}
-            isDataEntryComplete={isDataEntryComplete}
-            error={error}
-            commandPrompt={getCommandPrompt()}
-            handleAmountSubmit={handleAmountSubmit}
-            disabledBuses={disabledBuses}
-          />
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold">Data Entry</h2>
+            <Button onClick={toggleDataEntry}>
+              {showDataEntry ? 'Hide' : 'Show'} Data Entry
+            </Button>
+          </div>
+          {showDataEntry && (
+            <DataEntry
+              buses={buses}
+              selectedBus={selectedBus}
+              setSelectedBus={setSelectedBus}
+              isDataEntryComplete={isDataEntryComplete}
+              error={error}
+              commandPrompt={getCommandPrompt()}
+              handleAmountSubmit={handleAmountSubmit}
+              disabledBuses={disabledBuses}
+            />
+          )}
         </div>
         <div className="bg-white shadow-md rounded-lg p-4 sm:p-6">
           <Summary overallSummary={overallSummary} />
