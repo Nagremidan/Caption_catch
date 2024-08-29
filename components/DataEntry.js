@@ -38,17 +38,17 @@ const DataEntry = ({
         </div>
         <p className="text-[#d5d0ce] ml-2 text-sm">gokotagiri@admin ~</p>
       </div>
-      <div className="bg-[rgba(56,4,40,0.9)] text-white p-4 rounded-b-md font-mono text-sm">
-        <div className="flex items-center mb-2">
+      <div className="bg-black text-white p-4 rounded-b-md font-mono text-sm">
+        <div className="flex items-center mb-4 space-x-2">
           <span className="text-[#7eda28]">gokotagiri@admin</span>
           <span className="text-[#4878c0]">~</span>
           <span className="text-[#dddddd]">$</span>
-          <span className="ml-1">{commandPrompt}</span>
+          <span className="ml-2">{commandPrompt}</span>
         </div>
         
         {isFormVisible && !isDataEntryComplete && (
-          <Select onValueChange={setSelectedBus} value={selectedBus} className="mb-2">
-            <SelectTrigger className="w-full bg-transparent border-[#4878c0] text-white">
+          <Select onValueChange={setSelectedBus} value={selectedBus} className="mb-4">
+            <SelectTrigger className="w-full bg-transparent border-[#4878c0] text-white mb-4">
               <SelectValue placeholder="Select a bus" />
             </SelectTrigger>
             <SelectContent>
@@ -61,10 +61,10 @@ const DataEntry = ({
           </Select>
         )}
         
-        {error && <div className="text-red-500 mb-2">{error}</div>}
+        {error && <div className="text-red-500 mb-4">{error}</div>}
         
-        <div className="flex items-center">
-          <span className="text-[#7eda28]">gokotagiri@admin:</span>
+        <div className="flex items-center space-x-2">
+          <span className="text-[#7eda28]">gokotagiri@admin</span>
           <span className="text-[#4878c0]">~</span>
           <span className="text-[#dddddd]">$</span>
           <input
@@ -73,11 +73,11 @@ const DataEntry = ({
             value={enteredAmount}
             onChange={(e) => setEnteredAmount(e.target.value)}
             onKeyPress={handleKeyPress}
-            className="ml-1 bg-transparent border-none outline-none text-white w-full"
+            className="ml-2 bg-transparent border-none outline-none text-white w-full"
             placeholder="Enter amount"
           />
         </div>
-        <div className="h-4 w-2 bg-white ml-1 animate-pulse"></div>
+        <div className="h-4 w-2 bg-white ml-1 mt-2 animate-pulse"></div>
       </div>
     </div>
   );

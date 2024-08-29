@@ -189,7 +189,7 @@ const SalesReport = () => {
         <div className="bg-white shadow-md rounded-lg p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Data Entry</h2>
-            <Button onClick={toggleDataEntry}>
+            <Button variant="outline" onClick={toggleDataEntry}>
               {showDataEntry ? 'Hide' : 'Show'} Data Entry
             </Button>
           </div>

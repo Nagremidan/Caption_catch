@@ -145,7 +145,7 @@ const Summary = ({ overallSummary }) => {
           onClick={handlePrint} 
           variant="outline" 
           size="sm" 
-          className="flex items-center bg-transparent border-white text-white hover:bg-white/10 transition-colors duration-200"
+          className="flex items-center bg-transparent border-white text-white hover:bg-white/100 transition-colors duration-200"
         >
           <PrinterIcon className="w-4 h-4 mr-2" />
           Print Report
