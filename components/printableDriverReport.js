@@ -327,7 +327,7 @@ const PrintableDriverReport = () => {
           }
 
           .bus-total-item {
-            font-size: 6pt;
+            font-size: 12pt;
             padding: 1px 3px;
             background-color: #f0f0f0;
             border: 1px solid #ccc;
@@ -341,7 +341,7 @@ const PrintableDriverReport = () => {
           }
 
           .box-count {
-            font-size: 6pt;
+            font-size: 12pt;
           }
 
           .print-content {
