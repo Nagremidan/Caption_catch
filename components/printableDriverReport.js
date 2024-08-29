@@ -1,14 +1,82 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../lib/firebaseConfig';
 import { Button } from '@/components/ui/button';
+import html2canvas from 'html2canvas';
+import { Share, X } from 'lucide-react';
+
+const ShareButton = ({ containerRef }) => {
+  const [showPreview, setShowPreview] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
+
+  const captureAndShare = async () => {
+    if (containerRef.current) {
+      const canvas = await html2canvas(containerRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        allowTaint: true,
+      });
+      const image = canvas.toDataURL('image/jpeg', 1.0);
+      setImageUrl(image);
+      setShowPreview(true);
+    }
+  };
+
+  const shareViaWhatsApp = async () => {
+    try {
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], 'report.jpg', { type: 'image/jpeg' });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Cbe Cargo Report',
+          text: 'Check out this report!',
+        });
+      } else {
+        // Fallback for browsers that don't support file sharing
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('Check out this report!')}`;
+        window.open(whatsappUrl, '_blank');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      // Fallback to just opening WhatsApp
+      const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent('Check out this report!')}`;
+      window.open(whatsappUrl, '_blank');
+    }
+  };
+
+  return (
+    <>
+      <Button onClick={captureAndShare} className="share-button">
+        <Share className="w-4 h-4 mr-2" /> Share
+      </Button>
+      {showPreview && (
+        <div className="preview-modal">
+          <div className="preview-content">
+            <Button onClick={() => setShowPreview(false)} className="close-button">
+              <X className="w-4 h-4" />
+            </Button>
+            <img src={imageUrl} alt="Report Preview" className="preview-image" />
+            <Button onClick={shareViaWhatsApp} className="whatsapp-share-button">
+              Share via WhatsApp
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
 
 const PrintableDriverReport = () => {
   const [busDetails, setBusDetails] = useState([]);
   const [driverData, setDriverData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const reportContainerRef = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -27,6 +95,10 @@ const PrintableDriverReport = () => {
       const driverSheetsSnapshot = await getDocs(driverSheetsRef);
       const driverSheetsData = driverSheetsSnapshot.docs.map(doc => doc.data());
       setDriverData(driverSheetsData);
+
+      if (driverSheetsData.length === 0) {
+        setError("No driver data available.");
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       setError("Failed to load report data. Please try again.");
@@ -72,21 +144,33 @@ const PrintableDriverReport = () => {
   };
 
   if (loading) {
-    return <div className="loading">Loading report data...</div>;
+    return (
+      <div className="report-container">
+        <div className="loading">Loading report data...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="error">{error}</div>;
+    return (
+      <div className="report-container">
+        <div className="error-container">{error}</div>
+      </div>
+    );
   }
 
   if (busDetails.length === 0 && driverData.length === 0) {
-    return <div className="no-data">No data available for the report.</div>;
+    return (
+      <div className="report-container">
+        <div className="error-container">{error}</div>
+      </div>
+    );
   }
 
   const totalBoxes = calculateTotalBoxes();
 
   return (
-    <div className="report-container">
+    <div className="report-container" ref={reportContainerRef}>
       <h1 className="page-title">Cbe Cargo</h1>
       <div className="driver-data">
         {driverData.map((driver, index) => (
@@ -132,9 +216,12 @@ const PrintableDriverReport = () => {
         })}
       </div>
 
-      <Button onClick={handlePrint} className="print-button">
-        Print Report
-      </Button>
+      <div className="action-buttons">
+        <Button onClick={handlePrint} className="print-button">
+          Print Report
+        </Button>
+        <ShareButton containerRef={reportContainerRef} />
+      </div>
 
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -151,6 +238,9 @@ const PrintableDriverReport = () => {
           max-width: 100%;
           margin: 0 auto;
           padding: 10px;
+          min-height: 100vh;
+          display: flex;
+          flex-direction: column;
         }
 
         .page-title {
@@ -206,6 +296,7 @@ const PrintableDriverReport = () => {
           display: flex;
           flex-wrap: wrap;
           gap: 10px;
+          flex-grow: 1;
         }
 
         .bus-group {
@@ -260,15 +351,79 @@ const PrintableDriverReport = () => {
           color: #666;
         }
 
-        .print-button {
-          display: block;
-          margin: 20px auto;
+        .action-buttons {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          margin-top: 20px;
         }
 
-        .loading, .error, .no-data {
+        .print-button, .share-button {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .preview-modal {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+
+        .preview-content {
+          background-color: white;
+          padding: 20px;
+          border-radius: 8px;
+          max-width: 90%;
+          max-height: 90%;
+          overflow: auto;
+          position: relative;
+        }
+
+        .close-button {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+        }
+
+        .preview-image {
+          max-width: 100%;
+          height: auto;
+        }
+
+        .whatsapp-share-button {
+          margin-top: 10px;
+          width: 100%;
+        }
+
+        .loading, .error-container, .no-data {
           text-align: center;
           padding: 20px;
           font-size: 1.125rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+        }
+
+        .error-container {
+          background-color: #000;
+          color: #fff;
+          border-radius: 8px;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          padding: 20px;
+          max-width: 80%;
         }
 
         @media screen and (max-width: 768px) {
@@ -288,12 +443,12 @@ const PrintableDriverReport = () => {
         @media print {
           @page {
             size: A4 portrait;
-            margin: 1mm 5mm 5mm 5mm;
+            margin: 2mm 5mm 5mm 5mm;
           }
 
           body {
-            font-size: 9pt;
-            line-height: 1.2;
+            font-size: 10pt;
+            line-height: 1.3;
           }
 
           .report-container {
@@ -304,7 +459,7 @@ const PrintableDriverReport = () => {
           }
 
           .page-title {
-            font-size: 14pt;
+            font-size: 16pt;
             margin-bottom: 3mm;
           }
 
@@ -314,21 +469,21 @@ const PrintableDriverReport = () => {
 
           .driver-item {
             font-size: 10pt;
-            padding: 1px;
+            padding: 2px;
           }
 
           .bus-wise-totals {
             display: flex;
             flex-wrap: wrap;
-            gap: 2px;
+            gap: 2mm;
             margin-bottom: 3mm;
             page-break-inside: avoid;
             width: 100%;
           }
 
           .bus-total-item {
-            font-size: 12pt;
-            padding: 1px 3px;
+            font-size: 10pt;
+            padding: 2px 5px;
             background-color: #f0f0f0;
             border: 1px solid #ccc;
             white-space: nowrap;
@@ -341,20 +496,20 @@ const PrintableDriverReport = () => {
           }
 
           .box-count {
-            font-size: 12pt;
+            font-size: 10pt;
           }
 
           .print-content {
             display: block;
             column-count: 2;
-            column-gap: 10px;
+            column-gap: 5mm;
             column-rule: 1px solid #ddd;
           }
 
           .bus-group {
             break-inside: avoid;
             page-break-inside: avoid;
-            margin-bottom: 6mm;
+            margin-bottom: 5mm;
             box-shadow: none;
           }
 
@@ -362,19 +517,23 @@ const PrintableDriverReport = () => {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 3mm;
+            margin-bottom: 2mm;
           }
 
           .bus-title {
-            font-size: 11pt;
+            font-size: 12pt;
           }
 
           .bus-details {
-            font-size: 8pt;
+            font-size: 9pt;
+          }
+
+          .bus-item {
+            margin-bottom: 1.5mm;
           }
 
           .mobile-numbers {
-            font-size: 7pt;
+            font-size: 8pt;
           }
 
           .print-button {
@@ -383,6 +542,10 @@ const PrintableDriverReport = () => {
 
           header, footer {
             display: none !important;
+          }
+
+          .error-container {
+            display: none;
           }
         }
       `}</style>
