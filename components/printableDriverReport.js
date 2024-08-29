@@ -52,13 +52,23 @@ const PrintableDriverReport = () => {
 
   const sortedGroupedBuses = () => {
     const grouped = groupBusesByName();
-    return Object.entries(grouped).sort((a, b) => a[0].localeCompare(b[0]));
+    return Object.entries(grouped)
+      .sort((a, b) => {
+        if (a[0] === 'tmy') return 1;
+        if (b[0] === 'tmy') return -1;
+        return b[1].length - a[1].length;
+      });
   };
 
   const groupedBuses = sortedGroupedBuses();
 
   const calculateTotalBoxes = () => {
     return busDetails.reduce((sum, bus) => sum + parseInt(bus.numberOfBoxes || 0), 0);
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' });
   };
 
   if (loading) {
@@ -81,9 +91,20 @@ const PrintableDriverReport = () => {
       <div className="driver-data">
         {driverData.map((driver, index) => (
           <div key={index} className="driver-item">
-            <p>{driver.date} | {driver.driverName} | Diesel: {driver.diesel} | Total: {totalBoxes} | Start: {driver.vehicleStartTime}</p>
+            <p>{formatDate(driver.date)} | {driver.driverName} | Diesel: {driver.diesel} | Total: {totalBoxes} | Start: {driver.vehicleStartTime}</p>
           </div>
         ))}
+      </div>
+      <div className="bus-wise-totals">
+        {groupedBuses.map(([busName, buses]) => {
+          const boxCount = buses.reduce((sum, bus) => sum + parseInt(bus.numberOfBoxes || 0), 0);
+          return (
+            <div key={busName} className="bus-total-item">
+              <span className="bus-name">{busName}:</span>
+              <span className="box-count">{boxCount}</span>
+            </div>
+          );
+        })}
       </div>
       <div className="print-content">
         {groupedBuses.map(([busName, buses]) => {
@@ -92,7 +113,7 @@ const PrintableDriverReport = () => {
             <div key={busName} className="bus-group">
               <div className="bus-title-container">
                 <h2 className="bus-title">{busName}</h2>
-                {boxCount > 0 && <span className="box-count">{boxCount} boxes</span>}
+                {boxCount > 0 && <span className="box-count">{boxCount} {boxCount === 1 ? 'Box' : 'Boxes'}</span>}
               </div>
               <div className="bus-details">
                 {buses.map((bus, index) => (
@@ -101,7 +122,7 @@ const PrintableDriverReport = () => {
                       {bus.from} TO {bus.to} - {bus.numberOfBoxes} {bus.paymentMode} {bus.amount}
                     </p>
                     <p className="mobile-numbers">
-                      {bus.fromMobile} {bus.toMobile}
+                      {bus.fromMobile && bus.toMobile ? `${bus.fromMobile} || ${bus.toMobile}` : bus.fromMobile || bus.toMobile}
                     </p>
                   </div>
                 ))}
@@ -157,6 +178,28 @@ const PrintableDriverReport = () => {
 
         .driver-item p {
           margin: 0;
+        }
+
+        .bus-wise-totals {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-bottom: 15px;
+          justify-content: flex-start;
+        }
+
+        .bus-total-item {
+          background-color: #e8f4fd;
+          padding: 5px 10px;
+          border-radius: 4px;
+          font-size: 0.9rem;
+          display: flex;
+          align-items: center;
+        }
+
+        .bus-name {
+          font-weight: 600;
+          margin-right: 5px;
         }
 
         .print-content {
@@ -245,7 +288,7 @@ const PrintableDriverReport = () => {
         @media print {
           @page {
             size: A4 portrait;
-            margin: 1mm 5mm 5mm 5mm;  /* Reduced top margin */
+            margin: 1mm 5mm 5mm 5mm;
           }
 
           body {
@@ -262,16 +305,43 @@ const PrintableDriverReport = () => {
 
           .page-title {
             font-size: 14pt;
-            margin-bottom: 3mm;  /* Reduced margin */
+            margin-bottom: 3mm;
           }
 
           .driver-data {
-            margin-bottom: 3mm;  /* Reduced margin */
+            margin-bottom: 3mm;
           }
 
           .driver-item {
-            font-size: 10pt;  /* Slightly reduced font size */
+            font-size: 10pt;
             padding: 1px;
+          }
+
+          .bus-wise-totals {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+            margin-bottom: 3mm;
+            page-break-inside: avoid;
+            width: 100%;
+          }
+
+          .bus-total-item {
+            font-size: 6pt;
+            padding: 1px 3px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .bus-name {
+            font-weight: 600;
+          }
+
+          .box-count {
+            font-size: 6pt;
           }
 
           .print-content {
@@ -284,7 +354,7 @@ const PrintableDriverReport = () => {
           .bus-group {
             break-inside: avoid;
             page-break-inside: avoid;
-            margin-bottom: 6mm;  /* Slightly reduced margin */
+            margin-bottom: 6mm;
             box-shadow: none;
           }
 
@@ -292,16 +362,11 @@ const PrintableDriverReport = () => {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 3mm;  /* Reduced margin */
+            margin-bottom: 3mm;
           }
 
           .bus-title {
-            font-size: 11pt;  /* Slightly reduced font size */
-          }
-
-          .box-count {
-            font-size: 9pt;  /* Slightly reduced font size */
-            margin-left: 8mm;
+            font-size: 11pt;
           }
 
           .bus-details {
